@@ -1,0 +1,1 @@
+curl -X GET https://api.spotify.com/v1/me/following?type=artist&limit=20 -H Accept: application/json -H Content-Type: application/json -H Authorization: Bearer BQC4doUGCjeANxB7WjKlYBcyFtQOTrPYTtAJzg9STp6bBPdbtwU5CGiltsmMgzAoQrC6bkpeTzyzB-oJ4MHfwrvyjTYrkXfYW_k33UzJ_3U8FwPa9Id5DlhJYOzxmVC9Qm3QIS6zbMMuqwiJLlRxsfO-3_yCt7dcgd0j92QW-Tnnp6bc9ktp_mhviVY
