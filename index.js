@@ -1,8 +1,9 @@
 var express = require('express');
 var app = express();
-app.use(express.json());
 var path = require("path");
 var http = require('http').createServer(app);
+var fs = require('fs');
+var util = require('util');
 var request = require('request');
 var cors = require('cors');
 var querystring = require('querystring');
@@ -10,6 +11,7 @@ var cookieParser = require('cookie-parser');
 var client_id = '3a6f0212c6124220975147d209cec029';
 var client_secret = '';
 var redirect_uri = 'http://localhost:8888/callback';
+var stateKey = 'spotify_auth_state';
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -18,28 +20,16 @@ var generateRandomString = function(length) {
   }
   return text;
 };
-var stateKey = 'spotify_auth_state';
+app.use(express.static(path.join(__dirname, "views")));
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
-var session = require('express-session');
-var MemoryStore = session.MemoryStore;
-var sessionStore = new MemoryStore();
-var sessionMiddleware = session({
-    store: sessionStore,
-    secret: 'secret',
-    key: 'express.sid',
-    saveUninitialized: true,
-    resave: false
-});
-
-app.use(express.static(path.join(__dirname, "views")));
-app.set('view engine', 'ejs');
-app.use(sessionMiddleware);
-app.use(express.urlencoded({extended: true}));
 
 app.get('/', function(req, res) {
-    res.render('index.ejs', {});
+    res.render('index', {});
 });
 
 app.get('/login', function(req, res) {
@@ -56,6 +46,7 @@ app.get('/login', function(req, res) {
       state: state
     }));
 })
+
 app.get('/callback', function(req, res) {
 
   var code = req.query.code || null;
@@ -89,31 +80,19 @@ app.get('/callback', function(req, res) {
             refresh_token = body.refresh_token;
 
         var options = {
-          url: 'https://api.spotify.com/v1/me',
+          url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
         request.get(options, function(error, response, body) {
-          console.log(body);
-          console.log(access_token);
+          console.log(util.inspect(body, {showHidden: false, depth: null}));
+          fs.writeFile('artistsfollowed.txt', util.inspect(body.artists.items, {showHidden: false, depth: null}), function (err) {
+            if (err) throw err;
+            console.log('Saved!');
+          });
         });
-
-
-        var options = {
-          url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
-          headers: {
-            "Authorization": "Bearer" + access_token,
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-        }
-
-        request.get(options, function(error, response, body) {
-          res.redirect('/authd', );
-        });
-
-
+        res.redirect('/aut');
       } else {
         res.redirect('/#' +
           querystring.stringify({
@@ -129,7 +108,7 @@ app.get('/refresh_token', function(req, res) {
   var refresh_token = req.query.refresh_token;
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
-    headers: { 'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
+    headers: { 'Authorization':'Basic'  + (new Buffer(client_id + ':' + client_secret).toString('base64')) },
     form: {
       grant_type: 'refresh_token',
       refresh_token: refresh_token
@@ -146,8 +125,10 @@ app.get('/refresh_token', function(req, res) {
     }
   });
 });
-app.get('/authd', function(req,res) {
-  res.render('aut');
+
+app.get('/aut', function(req,res) {
+  res.render('aut', {});
 });
+
 console.log('listening on port 8888');
 app.listen(8888);
