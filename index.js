@@ -36,7 +36,7 @@ app.get('/login', function(req, res) {
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
 
-  var scope = 'user-read-private user-read-email user-follow-read';
+  var scope = 'user-read-private user-read-email user-follow-read user-top-read';
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
@@ -80,17 +80,18 @@ app.get('/callback', function(req, res) {
             refresh_token = body.refresh_token;
 
         var options = {
-          url: 'https://api.spotify.com/v1/me/following?type=artist&limit=50',
+          url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
 
         request.get(options, function(error, response, body) {
-          console.log(util.inspect(body, {showHidden: false, depth: null}));
-          fs.writeFile('artistsfollowed.txt', util.inspect(body.artists.items, {showHidden: false, depth: null}), function (err) {
+
+          fs.writeFile('artistsfollowed.txt', util.inspect(body.items, {showHidden: false, depth: null}), function (err) {
             if (err) throw err;
-            console.log('Saved!');
           });
+          var spawn = require("child_process").spawn;
+          var process = spawn('python3',["./artists.py",]);
         });
         res.redirect('/aut');
       } else {
@@ -127,7 +128,7 @@ app.get('/refresh_token', function(req, res) {
 });
 
 app.get('/aut', function(req,res) {
-  res.render('aut', {});
+  res.render('aut');
 });
 
 console.log('listening on port 8888');
