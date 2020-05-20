@@ -1,8 +1,11 @@
+const NewsAPI = require('newsapi');
+const newsapi = new NewsAPI('');
+const readline = require('readline');
+const fs = require('fs');
 var express = require('express');
 var app = express();
 var path = require("path");
 var http = require('http').createServer(app);
-var fs = require('fs');
 var util = require('util');
 var request = require('request');
 var cors = require('cors');
@@ -80,7 +83,7 @@ app.get('/callback', function(req, res) {
             refresh_token = body.refresh_token;
 
         var options = {
-          url: 'https://api.spotify.com/v1/me/top/artists?limit=50',
+          url: 'https://api.spotify.com/v1/me/top/artists?limit=15',
           headers: { 'Authorization': 'Bearer ' + access_token },
           json: true
         };
@@ -90,8 +93,25 @@ app.get('/callback', function(req, res) {
           fs.writeFile('artistsfollowed.txt', util.inspect(body.items, {showHidden: false, depth: null}), function (err) {
             if (err) throw err;
           });
+
           var spawn = require("child_process").spawn;
           var process = spawn('python3',["./artists.py",]);
+          process.stdout.on('end', function(){
+            try {
+              const data = fs.readFileSync('/Users/pranavaggarwal/newsic/tosearch.txt', 'UTF-8');
+              const lines = data.split(/\r?\n/);
+              lines.forEach((line) => {
+                newsapi.v2.everything({
+                  qInTitle: line,
+                  sortBy: 'relevancy'
+                }).then(response => {
+                  console.log(response);
+                  });
+              });
+            } catch (err) {
+              console.error(err);
+            }
+          });
         });
         res.redirect('/aut');
       } else {
