@@ -2,7 +2,7 @@ const NewsAPI = require('newsapi');
 const newsapi = new NewsAPI('');
 const readline = require('readline');
 const fs = require('fs');
-var artistlim = 5;
+var artistlim = 20;
 var express = require('express');
 var app = express();
 var path = require("path");
@@ -122,8 +122,30 @@ app.get('/callback', function (req, res) {
                     depth: null
                   });
                   if (count == artistlim) {
-                    res.render('links', {
-                      display: display
+
+                    fs.writeFile('links.txt', display, function (err) {
+                      if (err) throw err;
+                    });
+
+                    var spawn = require('child_process').spawn,
+                      py = spawn('python', ['clean_links.py']);
+
+                    py.stdout.on('end', function () {
+
+                      try {
+                        var toshow = '';
+                        var data = fs.readFileSync('links_cleaned.txt', 'UTF-8');
+                        var lines = data.split(/\r?\n/);
+                        lines.forEach((line) => {
+                          toshow += line + '\n\n';
+                        });
+                      }
+                      catch (err) {
+                        console.error(err);
+                      }
+                      res.render('links', {
+                        toshow: toshow
+                      });
                     });
                   }
                 });

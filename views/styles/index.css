@@ -33,7 +33,17 @@ a {
   top: 330px;
   left: 50px;
   font-size: 25px;
-
+}
+#footer {
+  height: 150px;
+  background: #630303;
+  padding: 0 60px;
+  color: white;
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  top: 600px;
+  left: 0;
 }
 #button {
   height: 120px;
