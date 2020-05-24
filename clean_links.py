@@ -4,8 +4,10 @@ with open('links.txt') as l:
         if 'source:' in line:
             if 'id: null' in line:
                 line = line.replace('source: { id: null, name: \'', '').replace('\' },', '')
-                line = line.strip()
-                links_cleaned += 'Source: ' + line + '<br>'
+            else:
+                line = line.replace('source: { id: ', '').replace('},', '')
+            line = line.strip()
+            links_cleaned += 'Source: ' + line + '<br>'
 
         if 'title:' in line:
             if 'title: \"' in line:

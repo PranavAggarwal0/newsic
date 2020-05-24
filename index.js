@@ -1,8 +1,8 @@
 const NewsAPI = require('newsapi');
-const newsapi = new NewsAPI('');
+const newsapi = new NewsAPI('9c222310af424fbe93d368f861519e5c');
 const readline = require('readline');
 const fs = require('fs');
-var artistlim = 20;
+var artistlim = 5;
 var express = require('express');
 var app = express();
 var path = require("path");
@@ -13,7 +13,7 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var client_id = '3a6f0212c6124220975147d209cec029';
-var client_secret = '';
+var client_secret = '329f5a93a8144fc197fb1cf5334d1bb7';
 var redirect_uri = 'http://localhost:8888/callback';
 var stateKey = 'spotify_auth_state';
 var generateRandomString = function (length) {
@@ -36,6 +36,14 @@ app.use(express.static(__dirname + '/public'))
 
 app.get('/', function (req, res) {
   res.render('index', {});
+});
+
+app.get('/oops', function (req, res) {
+  res.render('oops', {});
+});
+
+app.get('/about', function (req, res) {
+  res.render('about', {});
 });
 
 app.get('/login', function (req, res) {
@@ -95,14 +103,19 @@ app.get('/callback', function (req, res) {
         };
 
         request.get(options, function (error, response, body) {
-
+          if(util.inspect(body.items, {
+            showHidden: false,
+            depth: null
+          })=='[]') {
+            res.render('oops');
+            return;
+          }
           fs.writeFile('artistsfollowed.txt', util.inspect(body.items, {
             showHidden: false,
             depth: null
           }), function (err) {
             if (err) throw err;
           });
-
           var spawn = require("child_process").spawn;
           var process = spawn('python3', ["./clean_artists.py", ]);
           process.stdout.on('end', function () {
@@ -112,17 +125,19 @@ app.get('/callback', function (req, res) {
               var display = '';
               var count = 0;
               lines.forEach((line) => {
+                count++;
+              });
+              lines.forEach((line) => {
                 newsapi.v2.everything({
                   qInTitle: line,
                   language: 'en'
                 }).then(response => {
-                  count++;
+                  count--;
                   display += util.inspect(response, {
                     showHidden: false,
                     depth: null
                   });
-                  if (count == artistlim) {
-
+                  if (count == 1) {
                     fs.writeFile('links.txt', display, function (err) {
                       if (err) throw err;
                     });
