@@ -1,0 +1,31 @@
+h1 {
+  color: white;
+}
+a {
+  text-decoration: none;
+}
+h6 {
+  font-size: 30px;
+  text-align-last: center;
+}
+#header {
+  height: 100px;
+  background: #630303;
+  padding: 0 60px;
+  color: white;
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+#content {
+  height: 120px;
+  background: white;
+  color: #630303;
+  position: fixed;
+  z-index: 10;
+  width: 100%;
+  top: 330px;
+  font-size: 15px;
+}
