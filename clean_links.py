@@ -23,10 +23,13 @@ with open('links.txt') as l:
             links_cleaned += line + '<br>'
 
         if 'urlToImage:' in line:
-            line = line.replace('urlToImage: \'', '').replace('\',', '')
-            line = line.strip()
-            line = '<img src=\"' + line + '\" width=\"600px\" height=\"300px\" alt=\"Picture!!\"/>'
-            links_cleaned += line + '<br><br><br><hr>'
+            if 'urlToImage: null' in line:
+                links_cleaned += '<br><br><hr>'
+            else:
+                line = line.replace('urlToImage: \'', '').replace('\',', '')
+                line = line.strip()
+                line = '<img src=\"' + line + '\" width=\"600px\" height=\"300px\" alt=\"Picture!!\"/>'
+                links_cleaned += line + '<br><br><br><hr>'
 
 with open('links_cleaned.txt', 'w') as lc:
     lc.write(links_cleaned)

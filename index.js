@@ -1,5 +1,5 @@
 const NewsAPI = require('newsapi');
-const newsapi = new NewsAPI('');
+const newsapi = new NewsAPI('9c222310af424fbe93d368f861519e5c');
 const readline = require('readline');
 const fs = require('fs');
 var artistlim = 5;
@@ -12,8 +12,8 @@ var request = require('request');
 var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
-var client_id = '';
-var client_secret = '';
+var client_id = '3a6f0212c6124220975147d209cec029';
+var client_secret = '329f5a93a8144fc197fb1cf5334d1bb7';
 var redirect_uri = 'http://localhost:8888/callback';
 var stateKey = 'spotify_auth_state';
 var generateRandomString = function (length) {
@@ -161,6 +161,30 @@ app.get('/callback', function (req, res) {
                       res.render('links', {
                         toshow: toshow
                       });
+                      fs.unlink('/Users/pranavaggarwal/newsic/artistsfollowed.txt', (err) => {
+                        if (err) {
+                          console.error(err)
+                          return
+                        }
+                      })
+                      fs.unlink('/Users/pranavaggarwal/newsic/links_cleaned.txt', (err) => {
+                        if (err) {
+                          console.error(err)
+                          return
+                        }
+                      })
+                      fs.unlink('/Users/pranavaggarwal/newsic/links.txt', (err) => {
+                        if (err) {
+                          console.error(err)
+                          return
+                        }
+                      })
+                      fs.unlink('/Users/pranavaggarwal/newsic/tosearch.txt', (err) => {
+                        if (err) {
+                          console.error(err)
+                          return
+                        }
+                      })
                     });
                   }
                 });
