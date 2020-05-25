@@ -111,17 +111,17 @@ app.get('/callback', function (req, res) {
             res.render('oops');
             return;
           }
-          fs.writeFile('/artistsfollowed.txt', util.inspect(body.items, {
+          fs.writeFile(path.join(__dirname, 'artistsfollowed.txt'), util.inspect(body.items, {
             showHidden: false,
             depth: null
           }), function (err) {
             if (err) throw err;
           });
           var spawn = require("child_process").spawn;
-          var process = spawn('python3', ["./clean_artists.py", ]);
+          var process = spawn('python3', [path.join(__dirname, 'clean_artists.py'), ]);
           process.stdout.on('end', function () {
             try {
-              var data = fs.readFileSync('/tosearch.txt', 'UTF-8');
+              var data = fs.readFileSync(path.join(__dirname, 'tosearch.txt'), 'UTF-8');
               var lines = data.split(/\r?\n/);
               var display = '';
               var count = 0;
@@ -139,18 +139,18 @@ app.get('/callback', function (req, res) {
                     depth: null
                   });
                   if (count == 1) {
-                    fs.writeFile('/links.txt', display, function (err) {
+                    fs.writeFile(path.join(__dirname, 'links.txt'), display, function (err) {
                       if (err) throw err;
                     });
 
                     var spawn = require('child_process').spawn,
-                      py = spawn('python', ['clean_links.py']);
+                      py = spawn('python', [path.join(__dirname, 'clean_links.py')]);
 
                     py.stdout.on('end', function () {
 
                       try {
                         var toshow = '';
-                        var data = fs.readFileSync('/links_cleaned.txt', 'UTF-8');
+                        var data = fs.readFileSync(path.join(__dirname, 'links_cleaned.txt'), 'UTF-8');
                         var lines = data.split(/\r?\n/);
                         lines.forEach((line) => {
                           toshow += line + '\n\n';
@@ -162,25 +162,25 @@ app.get('/callback', function (req, res) {
                       res.render('links', {
                         toshow: toshow
                       });
-                      fs.unlink('/artistsfollowed.txt', (err) => {
+                      fs.unlink(path.join(__dirname, 'artistsfollowed.txt'), (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/links_cleaned.txt', (err) => {
+                      fs.unlink(path.join(__dirname, '/links_cleaned.txt'), (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/links.txt', (err) => {
+                      fs.unlink(path.join(__dirname, '/links.txt'), (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/tosearch.txt', (err) => {
+                      fs.unlink(path.join(__dirname, '/tosearch.txt'), (err) => {
                         if (err) {
                           console.error(err)
                           return
