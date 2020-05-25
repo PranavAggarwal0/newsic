@@ -111,7 +111,7 @@ app.get('/callback', function (req, res) {
             res.render('oops');
             return;
           }
-          fs.writeFile('artistsfollowed.txt', util.inspect(body.items, {
+          fs.writeFile('/artistsfollowed.txt', util.inspect(body.items, {
             showHidden: false,
             depth: null
           }), function (err) {
@@ -121,7 +121,7 @@ app.get('/callback', function (req, res) {
           var process = spawn('python3', ["./clean_artists.py", ]);
           process.stdout.on('end', function () {
             try {
-              var data = fs.readFileSync('/Users/pranavaggarwal/newsic/tosearch.txt', 'UTF-8');
+              var data = fs.readFileSync('/tosearch.txt', 'UTF-8');
               var lines = data.split(/\r?\n/);
               var display = '';
               var count = 0;
@@ -139,7 +139,7 @@ app.get('/callback', function (req, res) {
                     depth: null
                   });
                   if (count == 1) {
-                    fs.writeFile('links.txt', display, function (err) {
+                    fs.writeFile('/links.txt', display, function (err) {
                       if (err) throw err;
                     });
 
@@ -150,7 +150,7 @@ app.get('/callback', function (req, res) {
 
                       try {
                         var toshow = '';
-                        var data = fs.readFileSync('links_cleaned.txt', 'UTF-8');
+                        var data = fs.readFileSync('/links_cleaned.txt', 'UTF-8');
                         var lines = data.split(/\r?\n/);
                         lines.forEach((line) => {
                           toshow += line + '\n\n';
@@ -162,25 +162,25 @@ app.get('/callback', function (req, res) {
                       res.render('links', {
                         toshow: toshow
                       });
-                      fs.unlink('/Users/pranavaggarwal/newsic/artistsfollowed.txt', (err) => {
+                      fs.unlink('/artistsfollowed.txt', (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/Users/pranavaggarwal/newsic/links_cleaned.txt', (err) => {
+                      fs.unlink('/links_cleaned.txt', (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/Users/pranavaggarwal/newsic/links.txt', (err) => {
+                      fs.unlink('/links.txt', (err) => {
                         if (err) {
                           console.error(err)
                           return
                         }
                       })
-                      fs.unlink('/Users/pranavaggarwal/newsic/tosearch.txt', (err) => {
+                      fs.unlink('/tosearch.txt', (err) => {
                         if (err) {
                           console.error(err)
                           return
