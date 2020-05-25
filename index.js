@@ -14,6 +14,7 @@ var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 var client_id = '3a6f0212c6124220975147d209cec029';
 var client_secret = '329f5a93a8144fc197fb1cf5334d1bb7';
+var mode = require("./config.json").mode;
 var redirect_uri = mode === 'development' ? 'http://localhost:5000/callback' : 'http://news-ic.herokuapp.com/callback';
 var stateKey = 'spotify_auth_state';
 var generateRandomString = function (length) {
