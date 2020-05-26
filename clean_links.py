@@ -31,5 +31,5 @@ with open('links.txt') as l:
                 line = '<img src=\"' + line + '\" width=\"600px\" height=\"300px\" alt=\"Picture!!\"/>'
                 links_cleaned += line + '<br><br><br><hr>'
 
-with open('links_cleaned.txt', 'w') as lc:
+with open('/app/links_cleaned.txt', 'w') as lc:
     lc.write(links_cleaned)
