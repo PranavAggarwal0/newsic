@@ -12,7 +12,7 @@
     "fs": "0.0.1-security",
     "newsapi": "^2.4.0",
     "querystring": "~0.2.0",
-    "request": "~2.83.0",
+    "request": "~2.88.2",
     "util": "^0.12.2",
     "yarn": "^1.22.4"
   },
